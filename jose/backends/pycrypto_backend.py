@@ -80,7 +80,14 @@ class RSAKey(Key):
         e = base64_to_long(jwk_dict.get('e', 256))
         n = base64_to_long(jwk_dict.get('n'))
 
-        self.prepared_key = RSA.construct((n, e))
+        if 'd' not in jwk_dict:
+            self.prepared_key = RSA.construct((n, e))
+        else:
+            d = base64_to_long(jwk_dict.get('d'))
+            p = base64_to_long(jwk_dict.get('p'))
+            q = base64_to_long(jwk_dict.get('q'))
+            self.prepared_key = RSA.construct((n, e, d, p, q))
+
         return self.prepared_key
 
     def _process_cert(self, key):
